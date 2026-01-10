@@ -24,7 +24,41 @@ MobileLLM exhibits a **steeper scaling exponent** (-0.246) compared to general L
 
 **Sweet spot**: The 350M model offers the best quality/parameter ratio — 25% better perplexity than 125M for only 8% speed loss.
 
-See [results/report.md](results/report.md) for full analysis.
+## Analysis
+
+### The Core Finding
+
+The most striking result is the scaling exponent of **-0.246** — roughly 3× steeper than what Kaplan et al. (-0.076) and Hoffmann et al. (-0.089) found for general large language models. At first glance, this seems counterintuitive: shouldn't smaller models scale *worse*, not better?
+
+The answer lies in architecture. MobileLLM wasn't designed by simply shrinking a large model. Facebook's team made deliberate choices: deeper networks with narrower layers (30-54 layers vs the typical 12-24 for models this size), aggressive use of Grouped Query Attention to reduce KV-cache overhead, and SwiGLU activations. These aren't just efficiency hacks — they fundamentally change how capacity scales with parameters.
+
+### Why This Matters
+
+Traditional scaling laws were derived from models where width and depth scale together in relatively fixed proportions. MobileLLM breaks this assumption. By going "deep and thin," they've found a different point on the architecture Pareto frontier that scales more favorably when parameter-constrained.
+
+The practical implication: **in the sub-1B regime, architecture matters more than raw parameter count.** A well-designed 350M model (PPL 8.98) gets closer to a naively-designed 1B model than standard scaling laws would predict. This is exactly what you want for on-device deployment where every megabyte has a real cost.
+
+### Diminishing Returns
+
+| Transition | Params Added | PPL Improvement | PPL per 100M params |
+|------------|--------------|-----------------|---------------------|
+| 125M → 350M | +220M | -2.98 | 1.35 |
+| 350M → 600M | +258M | -0.98 | 0.38 |
+| 600M → 1B | +402M | -0.81 | 0.20 |
+
+The first 220M parameters buy 3× more perplexity improvement than the last 400M. There's a "knee" around 300-400M where you've captured most of the low-hanging fruit.
+
+### Speed-Quality Tradeoff
+
+The 350M model is only 8% slower than 125M (21.7 vs 23.7 tok/s) while being 25% better on perplexity. This is unusually graceful — MobileLLM's thin architecture keeps memory footprint per layer small, so you're less likely to be bandwidth-bound on KV-cache reads. It's only at 600M+ where you see expected degradation.
+
+### Conclusion
+
+MobileLLM demonstrates that "scaling laws are all you need" has limits. In the sub-billion regime, architectural innovation buys scaling efficiency that raw parameter count cannot. The -0.246 exponent isn't universal — it's a property of this specific architecture family, achieved through design choices prioritizing depth over width.
+
+For practitioners: if deploying on edge devices, don't just shrink a large model. Purpose-built small models like MobileLLM exploit a different part of the design space and scale more efficiently within their target regime.
+
+See [results/report.md](results/report.md) for detailed methodology and data.
 
 ## What's This About?
 
