@@ -1,0 +1,29 @@
+# Knowledge Distillation Configuration
+# For training smaller models from larger teachers
+
+distillation:
+  enabled: true
+
+  # Teacher model (larger model to distill from)
+  teacher:
+    name: "facebook/MobileLLM-1B"
+    freeze: true
+
+  # Student model (smaller model being trained)
+  student:
+    name: "custom"
+    num_layers: 16
+    hidden_size: 576
+    num_attention_heads: 9
+    num_kv_heads: 3
+
+  # Distillation hyperparameters
+  temperature: 2.0
+  alpha: 0.5  # Weight between distillation loss and task loss
+
+  # Loss components
+  loss:
+    use_soft_targets: true
+    use_hidden_states: false
+    use_attention_transfer: false
+    hidden_state_layers: []  # Which layers to match if use_hidden_states=true

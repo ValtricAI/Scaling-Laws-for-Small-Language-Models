@@ -1,0 +1,60 @@
+# Ablation Study Training Configuration
+# Faster training for component ablations
+
+defaults:
+  - default
+
+training:
+  # Reduced settings for faster ablation runs
+  batch_size: 16
+  gradient_accumulation_steps: 2
+  max_seq_length: 1024
+
+  learning_rate: 1.0e-4
+  max_steps: 50000
+  warmup_steps: 500
+
+  save_steps: 10000
+  eval_steps: 2000
+  logging_steps: 50
+
+ablation:
+  # Components to ablate
+  components:
+    - attention_type
+    - ffn_type
+    - normalization
+    - positional_encoding
+    - embedding_sharing
+    - depth_width_ratio
+
+  # Variations for each component
+  variations:
+    attention_type:
+      - standard
+      - grouped_query
+      - linear
+      - sparse
+
+    ffn_type:
+      - standard
+      - gated
+      - swiglu
+
+    normalization:
+      - layernorm
+      - rmsnorm
+
+    positional_encoding:
+      - absolute
+      - rotary
+      - alibi
+
+    embedding_sharing:
+      - true
+      - false
+
+    depth_width_ratio:
+      - shallow_wide    # 16 layers, 1280 hidden
+      - deep_narrow     # 32 layers, 960 hidden (MobileLLM style)
+      - balanced        # 24 layers, 1024 hidden

@@ -1,0 +1,87 @@
+# Scaling Sweep Experiment Configuration
+# Systematic evaluation across model sizes and compute budgets
+
+experiment:
+  name: "scaling_sweep"
+  description: "Scaling laws analysis for small language models"
+
+# MobileLLM family configurations
+models:
+  mobilellm_125m:
+    name: "facebook/MobileLLM-125M"
+    num_layers: 30
+    num_attention_heads: 9
+    num_kv_heads: 3
+    hidden_size: 576
+    params: 124.6e6
+
+  mobilellm_350m:
+    name: "facebook/MobileLLM-350M"
+    num_layers: 32
+    num_attention_heads: 15
+    num_kv_heads: 5
+    hidden_size: 960
+    params: 345.3e6
+
+  mobilellm_600m:
+    name: "facebook/MobileLLM-600M"
+    num_layers: 40
+    num_attention_heads: 18
+    num_kv_heads: 6
+    hidden_size: 1152
+    params: 603.1e6
+
+  mobilellm_1b:
+    name: "facebook/MobileLLM-1B"
+    num_layers: 54
+    num_attention_heads: 20
+    num_kv_heads: 5
+    hidden_size: 1280
+    params: 1.01e9
+
+# Scaling analysis parameters
+scaling:
+  # Compute budgets (FLOPs) to evaluate
+  compute_budgets:
+    - 1.0e17
+    - 1.0e18
+    - 1.0e19
+    - 1.0e20
+
+  # Token multipliers (tokens per parameter)
+  token_multipliers:
+    - 20
+    - 50
+    - 100
+    - 200
+
+# Evaluation configuration
+evaluation:
+  metrics:
+    - perplexity
+    - downstream_accuracy
+    - inference_latency
+    - memory_usage
+    - tokens_per_second
+
+  downstream_tasks:
+    - hellaswag
+    - piqa
+    - arc_easy
+    - arc_challenge
+    - winogrande
+    - boolq
+    - siqa
+    - obqa
+
+# Analysis settings
+analysis:
+  fit_scaling_law: true
+  scaling_law_form: "chinchilla"  # Options: chinchilla, kaplan
+  extrapolate_to:
+    - 1.0e21
+    - 1.0e22
+  compare_baselines:
+    - opt
+    - pythia
+    - bloom

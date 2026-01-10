@@ -1,0 +1,36 @@
+# MobileLLM-350M Base Configuration
+# Reference: https://huggingface.co/facebook/MobileLLM-350M
+
+model:
+  name: "facebook/MobileLLM-350M"
+  trust_remote_code: true
+
+  # MobileLLM-350M Architecture Specs
+  # 32 layers, 15 attention heads, 5 KV heads, 960 token dimension, 345.3M params
+  architecture:
+    num_layers: 32
+    num_attention_heads: 15
+    num_kv_heads: 5  # Grouped Query Attention
+    hidden_size: 960
+    vocab_size: 32000
+    max_position_embeddings: 2048
+
+  # Key architectural features
+  features:
+    activation: "swiglu"
+    embedding_sharing: true
+    grouped_query_attention: true
+    deep_and_thin: true  # More layers, smaller hidden size
+
+tokenizer:
+  name: "facebook/MobileLLM-350M"
+  use_fast: false
+  special_tokens:
+    eos_token: "</s>"
+    bos_token: "<s>"
+    unk_token: "<unk>"
+
+# Inference settings
+inference:
+  dtype: "auto"
+  device_map: "auto"

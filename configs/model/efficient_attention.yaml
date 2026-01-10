@@ -1,0 +1,24 @@
+# Efficient Attention Variants Configuration
+# For experimenting with different attention mechanisms
+
+defaults:
+  - base
+
+model:
+  name: "efficient_transformer"
+
+  # Grouped Query Attention (as used in MobileLLM)
+  attention:
+    type: "grouped_query"  # Options: standard, grouped_query, linear, sparse
+    num_kv_heads: 5  # MobileLLM-350M uses 5 KV heads with 15 attention heads
+
+  # Linear Attention variant
+  linear_attention:
+    enabled: false
+    feature_map: "elu"  # Options: elu, relu, softmax
+
+  # Sparse Attention variant
+  sparse_attention:
+    enabled: false
+    block_size: 64
+    num_global_tokens: 16
