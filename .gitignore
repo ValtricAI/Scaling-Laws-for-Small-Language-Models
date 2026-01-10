@@ -43,8 +43,11 @@ experiments/*
 !experiments/.gitkeep
 results/*
 !results/.gitkeep
-!results/figures/.gitkeep
-!results/tables/.gitkeep
+!results/figures/
+!results/tables/
+!results/report.md
+!results/results.csv
+!results/scaling_fit.json
 
 # Model checkpoints
 *.pt

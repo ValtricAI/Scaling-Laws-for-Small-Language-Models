@@ -1,0 +1,10 @@
+{
+  "equation": "PPL = 1152 * N^(-0.2457)",
+  "slope": -0.2457,
+  "intercept": 3.0614,
+  "r_squared": 0.9935,
+  "dataset": "wikitext-2-raw-v1",
+  "method": "sliding_window",
+  "max_length": 1024,
+  "stride": 512
+}
